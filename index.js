@@ -14,68 +14,93 @@ app.use(morgan("combined"));
 const rp = require("request-promise");
 const cheerio = require("cheerio");
 const fs = require("fs");
-const arrayLink = require("./arrayLink");
-console.log(arrayLink);
+// const arrayLink = require("./arrayLink");
+const db = require("./config/db");
 
-// const URL = `https://monngonmoingay.com/tim-kiem-mon-ngon/page/1/`;
+const arrayLink2 = require("./arrayLink2");
+console.log(arrayLink2);
+// const FoodsModel = require("./model");
 
-// console.log(URL);
+// db.connectDB();
+// console.log(arrayLink);
 
-// let data = [];
+// function sleep(ms) {
+//   return new Promise((resolve) => setTimeout(resolve, ms));
+// }
 
-// const options = {
-//   uri: URL,
-//   transform: function (body) {
-//     //Khi lấy dữ liệu từ trang thành công nó sẽ tự động parse DOM
-//     return cheerio.load(body);
-//   },
-// };
+// let DATA = [];
+// async function crawler() {
+//   await sleep(1000);
+//   for (i in arrayLink) {
+//     const linkchay = arrayLink[i];
 
-// (async function crawler() {
-//   try {
-//     // Lấy dữ liệu từ trang crawl đã được parseDOM
-//     var $ = await rp(options);
-//   } catch (error) {
-//     return error;
-//   }
-
-//   const title = $(".list-recipes > div");
-
-//   for (let i = 0; i < title.length; i++) {
-//     const infoFood = $(title[i]);
-//     const linkFood = infoFood.find(".info-list").find("a").attr("href");
-//     const titleFood = infoFood.find(".info-list").find("a").text().trim();
-//     let linkImage = infoFood
-//       .find(".text-center")
-//       .find(".img-fluid")
-//       .attr("data-lazy-src");
-//     // console.log(titleFood);
-//     if (linkImage === undefined) {
-//       console.log(linkImage);
-//       linkImage =
-//         "https://thumbs.dreamstime.com/b/no-image-available-icon-flat-vector-no-image-available-icon-flat-vector-illustration-132482953.jpg";
+//     try {
+//       const options = {
+//         uri: linkchay,
+//         transform: function (body) {
+//           //Khi lấy dữ liệu từ trang thành công nó sẽ tự động parse DOM
+//           return cheerio.load(body);
+//         },
+//       };
+//       var $ = await rp(options);
+//     } catch (error) {
+//       console.log("Link dang dung:" + arrayLink[i]);
+//       return error;
 //     }
 
-//     data.push({
-//       linkFood,
-//       titleFood,
-//       linkImage,
-//     });
-//   }
-//   console.log(data);
+//     const title = $(".list-recipes > div");
+//     let data = [];
 
-//   // cứ thêm dòng này khi chạy npm start là nó cứ reset đi reset lại
-//   const dataJson = JSON.stringify(data);
-//   fs.writeFileSync("data.json", dataJson);
-// })();
+//     for (let i = 0; i < title.length; i++) {
+//       const infoFood = $(title[i]);
+//       const linkFood = infoFood.find(".info-list").find("a").attr("href");
+//       const titleFood = infoFood.find(".info-list").find("a").text().trim();
+//       let linkImage = infoFood
+//         .find(".text-center")
+//         .find(".img-fluid")
+//         .attr("data-lazy-src");
+//       // console.log(titleFood);
+//       if (linkImage === undefined) {
+//         console.log(linkImage);
+//         linkImage =
+//           "https://thumbs.dreamstime.com/b/no-image-available-icon-flat-vector-no-image-available-icon-flat-vector-illustration-132482953.jpg";
+//       }
+
+//       data.push({
+//         linkFood,
+//         titleFood,
+//         linkImage,
+//       });
+//     }
+//     // console.log(data);
+
+//     // const newFood = FoodsModel.insertMany(data);
+//     // if (newFood) {
+//     //   console.log("thành công");
+//     // } else {
+//     //   console.log("thất bại");
+//     // }
+//     DATA.push(...data);
+//     console.log(DATA);
+
+//     fs.writeFileSync("data.json", JSON.stringify(DATA));
+//     console.log(linkchay + "------------->done");
+
+//     await sleep(1000);
+//   }
+// }
+// //call crawler
+// crawler();
+
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+let DATA = [];
 async function crawler() {
   await sleep(1000);
-  for (i in arrayLink) {
-    const linkchay = arrayLink[i];
+  for (i in arrayLink2) {
+    const linkchay = arrayLink2[i];
 
     try {
       const options = {
@@ -91,33 +116,44 @@ async function crawler() {
       return error;
     }
 
-    const title = $(".list-recipes > div");
+    const title = $(".container .row .col h1").text().trim();
+    let img = $(".video .youtube").attr("data-img");
+    if (img === undefined) {
+      img =
+        "https://thumbs.dreamstime.com/b/no-image-available-icon-flat-vector-no-image-available-icon-flat-vector-illustration-132482953.jpg";
+    }
+
+    const ingredients = $(".block-nguyenlieu ul > li");
+
     let data = [];
 
-    for (let i = 0; i < title.length; i++) {
-      const infoFood = $(title[i]);
-      const linkFood = infoFood.find(".info-list").find("a").attr("href");
-      const titleFood = infoFood.find(".info-list").find("a").text().trim();
-      let linkImage = infoFood
-        .find(".text-center")
-        .find(".img-fluid")
-        .attr("data-lazy-src");
-      // console.log(titleFood);
-      if (linkImage === undefined) {
-        console.log(linkImage);
-        linkImage =
-          "https://thumbs.dreamstime.com/b/no-image-available-icon-flat-vector-no-image-available-icon-flat-vector-illustration-132482953.jpg";
+    let ingredientArray = [];
+    for (let i = 0; i < ingredients.length; i++) {
+      let ingredient = $(ingredients[i]).find("span").text().trim();
+      if (ingredient !== "") {
+        ingredientArray.push(ingredient);
       }
-
-      data.push({
-        linkFood,
-        titleFood,
-        linkImage,
-      });
     }
-    console.log(data);
+    // console.log(ingredientArray);
 
-    fs.writeFileSync("data.json", JSON.stringify(data));
+    const doings = $(".container > .mb-3 ");
+
+    const preprocessing = $(doings[1]).find(".col").find("p").text().trim();
+    const perform = $(doings[2]).find(".col").find("p").text().trim();
+
+    data.push({
+      title,
+      img,
+      ingredientArray,
+      preprocessing,
+      perform,
+    });
+    // console.log(data);
+    // console.log(title, img);
+    DATA.push(...data);
+    console.log(DATA);
+
+    fs.writeFileSync("data2.json", JSON.stringify(DATA));
     console.log(linkchay + "------------->done");
 
     await sleep(1000);
