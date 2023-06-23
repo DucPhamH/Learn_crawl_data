@@ -12668,12 +12668,12 @@ const array = [
 ];
 
 const arrayLink2 = [];
-console.log(array.length);
+//console.log(array.length);
 for (let i = 0; i < array.length; i++) {
   let url = array[i].linkFood;
   arrayLink2.push(url);
 }
 
-console.log(arrayLink2);
+//console.log(arrayLink2);
 
 module.exports = arrayLink2;

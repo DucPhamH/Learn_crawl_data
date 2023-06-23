@@ -18,11 +18,11 @@ const fs = require("fs");
 const db = require("./config/db");
 
 const arrayLink2 = require("./arrayLink2");
-console.log(arrayLink2);
-// const FoodsModel = require("./model");
+//console.log(arrayLink2);
+//const FoodsModel = require("./model");
 
-// db.connectDB();
-// console.log(arrayLink);
+//db.connectDB();
+//console.log(arrayLink);
 
 // function sleep(ms) {
 //   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -153,7 +153,7 @@ async function crawler() {
     DATA.push(...data);
     console.log(DATA);
 
-    fs.writeFileSync("data2.json", JSON.stringify(DATA));
+    fs.writeFileSync("data3.json", JSON.stringify(DATA));
     console.log(linkchay + "------------->done");
 
     await sleep(1000);
